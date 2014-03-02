@@ -15,15 +15,19 @@ public class Logger {
 	
 	public final static Logger INSTANCE = new Logger();
 	
+	public void d(String message){
+		if( DEBUG ) System.out.println(message);
+	}
+	
 	public void d(String tag, String message){
-		if( DEBUG ) System.out.println(timestamp + "  " + tag + ": " + message);
+		if( DEBUG ) System.out.println(tag + ": " + message);
 	}
 	
 	public void d(String tag, int message){
-		if( DEBUG ) System.out.println(timestamp + "  " + tag + ": " + message);
+		if( DEBUG ) System.out.println(tag + ": " + message);
 	}
 	
 	public void e(String tag, String message){
-		if( DEBUG ) System.out.println(timestamp + "  " + tag + ": " + message);
+		if( DEBUG ) System.out.println(tag + ": " + message);
 	}
 }

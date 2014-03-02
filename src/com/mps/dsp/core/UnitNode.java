@@ -2,8 +2,8 @@ package com.mps.dsp.core;
 
 public class UnitNode{
 	
-	protected int address;
-	protected int port;
+	protected String address;
+	protected String port;
 	protected int index;
 
 	protected boolean status;
@@ -13,7 +13,7 @@ public class UnitNode{
 	 */
 	protected int identifier;
 	
-	public UnitNode(int index, int address, int port) {
+	public UnitNode(int index, String address, String port) {
 		setIndex(index);
 		setAddress(address);
 		setPort(port);
@@ -39,19 +39,19 @@ public class UnitNode{
 		//this.identifier = Util.hash(key);
 	}
 
-	public int getAddress() {
+	public String getAddress() {
 		return address;
 	}
 
-	public void setAddress(int address) {
+	public void setAddress(String address) {
 		this.address = address;
 	}
 
-	public int getPort() {
+	public String getPort() {
 		return port;
 	}
 
-	public void setPort(int port) {
+	public void setPort(String port) {
 		this.port = port;
 	}
 

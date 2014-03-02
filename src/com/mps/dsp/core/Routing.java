@@ -16,14 +16,11 @@ public class Routing {
 		return INSTANCE;
 	}
 	 
-	public void route(Node source, Node destination, String message) {
-
-		if( Math.abs(destination.getIndex() - source.getIndex()) == 0 )
-			return;
-		
+	public void route(Node source, Node destination, Message message) {
+ 
 		Node nextHopNode = null;
 		int minimumHopDistance = Util.INVALID_INDEX;
-
+		
 		for (Node successorNode : source.getModuloSuccessorList()) {
 
 			if( minimumHopDistance == Util.INVALID_INDEX ){
@@ -42,10 +39,13 @@ public class Routing {
 		}
 		
 		if(nextHopNode != null) {
-			Logger.INSTANCE.d(LTAG,"---- hop ---- " + source.getIndex() + " >>>> " + nextHopNode.getIndex());
+			Logger.INSTANCE.d(source + " >>>> " + nextHopNode);
 		}else{
 			return;
 		}
+		
+		if( nextHopNode.getIndex() == destination.getIndex() ) return;
+		
 		// route to the next hop
 		route(nextHopNode,destination,message);
 	}

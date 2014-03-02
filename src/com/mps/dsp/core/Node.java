@@ -6,7 +6,7 @@ public class Node extends UnitNode {
 	
 	public static final String LTAG = Node.class.getSimpleName();
 	
-	public Node(int index, int address, int port) {
+	public Node(int index, String address, String port) {
 		super(index, address, port);
 		
 		successor = null;
@@ -37,10 +37,13 @@ public class Node extends UnitNode {
 			
 			// ping the node -- is node still action ? 
 			// YES
-			moduloSuccessorList.add(NodeRegistry.getInstance().getNodesMap().get(routeNodePointerIndex));
-			
-			// add successor
-			successor = NodeRegistry.getInstance().getNodesMap().get(this.index + 1);
+						
+			if( routeNodePointerIndex != this.index ){
+				moduloSuccessorList.add(NodeRegistry.getInstance().getNodesMap().get(routeNodePointerIndex));
+				
+				// add successor
+				successor = NodeRegistry.getInstance().getNodesMap().get(this.index + 1);
+			}
 			
 			// add Predecessor
 			// predecessor = NodeRegistry.getInstance().getNodesMap().get(this.index - 1);
@@ -51,7 +54,6 @@ public class Node extends UnitNode {
 	}
 	
 	// getters and setters
-	
 	public UnitNode getSuccessor() {
 		return successor;
 	}
@@ -70,5 +72,11 @@ public class Node extends UnitNode {
 
 	public void setPredeccessor(Node predecessor) {
 		this.predecessor = predecessor;
+	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "[" + index + "]Node (" + address + ":" + port + ")";
 	}
 }
