@@ -1,4 +1,3 @@
-
 Problem : http://www.cs.helsinki.fi/webfm_send/1332
 
 You	are	given	1024	nodes.	Each	node	has	a	unique	ID	(e.g.	0,	1, 2,	 3	 …	 1023)	 and	 maintains	 a	 routing table	 of	 certain	 size	 in	 order	 to	communicate	with	each	other.
@@ -11,6 +10,13 @@ Requirements
 3. Implement	the	overlay	and	run	it	on	the	Ukko	cluster.	
 4. Experimentally	determine	values	for	maximum	routing	table	size	and	the	average	number	of	hops	to	deliver	a	message	between	any	two	nodes.
 
+Documentation	
+In	the	documentation,	you	are	required	to	report	the	following	things:	
+1. Describe	how	you	organize	the	nodes,	and	why	you	choose	that	way.	 If	you	used	any	references,	cite	the	references	in	the	documents.	
+2. Calculate	 the	average	 hops	 to	 deliver	a	message	 between	any	 two	 nodes	in	your	overlay,	from	both	experimental	and	theoretical	perspective.	
+3. Calculate	the	minimum,	maximum	and	average	size	of	the	routing	table	of	all	the	nodes	in	the	overlay.	
+4. Analyze	the	pros	and	cons	of	your	design,	and	what	is	best	context	it	can	be applied	to.	
+5. Present	 results	 of	 your	 experimental	 verification	 and	 compare	 them	 with	your	calculations
 
 The	metrics	we	use	to	evaluate	the solution	are	as	follows:	
 1. Quality	and	functionality	of	the	code.	
