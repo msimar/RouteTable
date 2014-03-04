@@ -1,44 +1,27 @@
 package com.mps.dsp.core;
 
-public class Message {	
+import java.io.Serializable;
+
+/**
+ * Encode a general message. This message is delivered to the RoutingTable after
+ * it is received from a neighbor Node.
+ * @author msingh
+ *
+ */
+public class Message implements Serializable{	
 	
-	private String message;
-	private Node source;
-	private Node destination;
+	private static final long serialVersionUID = -1196856163917615605L;
 	
-	public Message(Node source, Node destination, String message) {
-		setSource(source);
-		setDestination(destination);
-		setMessage(message);
-	}
+	public final Node fromNode;
+	public final Node toNode;
 	
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public Node getSource() {
-		return source;
-	}
-
-	public void setSource(Node source) {
-		this.source = source;
-	}
-
-	public Node getDestination() {
-		return destination;
-	}
-
-	public void setDestination(Node destination) {
-		this.destination = destination;
+	public Message(Node fromNode, Node toNode) {
+		 this.fromNode = fromNode;
+		 this.toNode = toNode;
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
+		return "(" + fromNode + " -> " + toNode + ")";
 	}
 }

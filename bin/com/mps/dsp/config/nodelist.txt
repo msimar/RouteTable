@@ -1,0 +1,8 @@
+0 localhost 40000
+1 localhost 40001
+2 localhost 40002
+3 localhost 40003
+4 localhost 40004
+5 localhost 40005
+6 localhost 40006
+7 localhost 40007

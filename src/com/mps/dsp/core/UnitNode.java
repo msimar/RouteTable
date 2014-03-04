@@ -1,5 +1,8 @@
 package com.mps.dsp.core;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 public class UnitNode{
 	
 	protected String address;
@@ -41,6 +44,10 @@ public class UnitNode{
 
 	public String getAddress() {
 		return address;
+	}
+	
+	public InetAddress getIPAddress() throws UnknownHostException{
+		return InetAddress.getByName(address);
 	}
 
 	public void setAddress(String address) {

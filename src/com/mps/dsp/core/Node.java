@@ -1,79 +1,142 @@
 package com.mps.dsp.core;
 
-import java.util.LinkedList;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import com.mps.dsp.config.Configuration;
+import com.mps.dsp.util.Logger;
+import com.mps.dsp.util.Util;
 
 public class Node extends UnitNode {
-	
+
 	public static final String LTAG = Node.class.getSimpleName();
-	
-	public Node(int index, String address, String port) {
-		super(index, address, port);
-		
-		successor = null;
-		predecessor = null;
+
+	private ServerTrait serverTrait;
+	/**
+	 * Node processes messages asynchronously. Similar to concept of
+	 * Producer/Consumer queue.
+	 */
+	private final BlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
+
+	/**
+	 * Receive a message.
+	 * 
+	 * @param message
+	 *            the received message
+	 */
+	public void receive(Message message) {
+		q.offer(message);
 	}
 
-	// routing pointer for immediate successor
-	private Node successor;
+	/**
+	 * The routing table for this node.
+	 */
+	public final RoutingTable routingTable;
+
+	public Node(int index, String address, String port) {
+		super(index, address, port);
+
+		this.routingTable = new RoutingTable();
+ 	}
 	
-	private Node predecessor;
+	/**
+	 * Execute the Node
+	 */
+	public void execute(){
+		this.serverTrait = new ServerTrait(this);
+		this.serverTrait.run();
 
-	// n+2^1, n+2^2, n+2^3,…, n+2^L (all arithmetic operations modulo N)
-	private final LinkedList<Node> moduloSuccessorList = new LinkedList<Node>();;
+		// Start a consumer thread to process messages for this Node.
+		new Thread(new Runnable() {
+			public void run() {
+				while (true) {
+					try {
+						// Get the next message, if any.
+						Message message = q.take();
 
-	public void speedUpLookup() {
-		
-		int routeNodePointerIndex;
-		
-		//Logger.INSTANCE.d(LTAG,"--- current Node : " + this.index );
-		
-		for( int i = 0 ; i < Util.MAX_ROUTE_TABLE_ENTRIES ; i++){
-			routeNodePointerIndex = ( this.index + (int)Math.pow(2, i) )  ;
-				
-			if( routeNodePointerIndex >= Util.MAX_IDENTIFIER )
-				routeNodePointerIndex = routeNodePointerIndex - Util.MAX_IDENTIFIER ; 
-			
-			//Logger.INSTANCE.d(LTAG, routeNodePointerIndex);
-			
-			// ping the node -- is node still action ? 
-			// YES
-						
-			if( routeNodePointerIndex != this.index ){
-				moduloSuccessorList.add(NodeRegistry.getInstance().getNodesMap().get(routeNodePointerIndex));
-				
-				// add successor
-				successor = NodeRegistry.getInstance().getNodesMap().get(this.index + 1);
+						// TODO Process the specific message
+						Logger.d("Message Recevied: " + message);
+
+					} catch (InterruptedException e) {
+
+					}
+				}
 			}
-			
-			// add Predecessor
-			// predecessor = NodeRegistry.getInstance().getNodesMap().get(this.index - 1);
-			
-			// NO
-			
+		}).start();
+	}
+
+	/**
+	 * Perform speed lookup by configuring routing table
+	 */
+	public void speedUpLookup() {
+
+		int routeNodePointerIndex;
+
+		// Logger.INSTANCE.d(LTAG,"--- current Node : " + this.index );
+
+		for (int i = 0; i < Configuration.MAX_ROUTE_TABLE_ENTRIES; i++) {
+			routeNodePointerIndex = (this.index + (int) Math.pow(2, i));
+
+			if (routeNodePointerIndex >= Configuration.MAX_IDENTIFIER)
+				routeNodePointerIndex = routeNodePointerIndex
+						- Configuration.MAX_IDENTIFIER;
+
+			// Logger.INSTANCE.d(LTAG, routeNodePointerIndex);
+
+			// ping the node -- is node still action ?
+			// YES
+
+			if (routeNodePointerIndex != this.index) {
+				this.routingTable.addToModuloSuccessorList(
+						NodeRegistry.getInstance().getNodesMap()
+								.get(routeNodePointerIndex));
+
+				// add successor
+				this.routingTable.setSuccessor(NodeRegistry.getInstance()
+						.getNodesMap().get(this.index + 1));
+			}
 		}
 	}
 	
-	// getters and setters
-	public UnitNode getSuccessor() {
-		return successor;
+	/**
+	 * Route the message from Source Node to Destination Node.
+	 * @param destination the destination Node.
+	 * @param message the message for destination Node. 
+	 */
+	public void route(Node destination, Message message) {
+		 
+		Node nextHopNode = null;
+		int minimumHopDistance = Util.INVALID_INDEX;
+		
+		for (Node successorNode : this.routingTable.getModuloSuccessorList()) {
+
+			if( minimumHopDistance == Util.INVALID_INDEX ){
+				// update the minimum hop node distance
+				minimumHopDistance = destination.getIndex() - successorNode.getIndex();
+				// update the next hope node
+				nextHopNode = successorNode;
+			}else{
+				if (minimumHopDistance > (destination.getIndex() - successorNode.getIndex())) {
+					// update the min hop node distance
+					minimumHopDistance = destination.getIndex() - successorNode.getIndex();
+					// update the next hope node
+					nextHopNode = successorNode;
+				}
+			}
+		}
+		
+		if(nextHopNode != null) {
+			Logger.d(this + " >>>> " + nextHopNode);
+		}else{
+			return;
+		}
+		
+		if( nextHopNode.getIndex() == destination.getIndex() ) return;
+		
+		// route to the next hop
+		nextHopNode.route(destination,message);
 	}
 
-	public void setSuccessor(Node successor) {
-		this.successor = successor;
-	}
-
-	public LinkedList<Node> getModuloSuccessorList() {
-		return moduloSuccessorList;
-	}
-
-	public Node getPredeccessor() {
-		return predecessor;
-	}
-
-	public void setPredeccessor(Node predecessor) {
-		this.predecessor = predecessor;
-	}
-	
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
