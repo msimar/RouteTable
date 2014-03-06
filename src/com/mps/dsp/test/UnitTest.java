@@ -1,15 +1,23 @@
 package com.mps.dsp.test;
 
 import com.mps.dsp.config.Configuration;
-import com.mps.dsp.core.Message;
 import com.mps.dsp.core.Node;
 import com.mps.dsp.core.NodeRegistry;
 import com.mps.dsp.test.RoutingTest.RouteCommand;
 
+/**
+ * The Class to perform App Unit testing. It 
+ * validate functional aspect of algorithm to 
+ * route message between nodes.
+ * 
+ * @author msingh
+ *
+ */
 public class UnitTest {
 
 	/**
-	 * @param args
+	 * Test the routing table for all the nodes in the 
+	 * network.
 	 */
 	public static void testRoutingTable() {
 		// show routing table for each node
@@ -23,6 +31,10 @@ public class UnitTest {
 		}
 	}
 
+	/**
+	 * Test the routing table for each node in the 
+	 * network.
+	 */
 	public static void testEachNodeRoutingTable(Node node) {
 		// Show routing table for that node
 		System.out.println("Routing Table : " + node);
@@ -39,6 +51,10 @@ public class UnitTest {
 //		source.route(destination, new Message(source, destination, "Chi"));
 //	}
 	
+	/**
+	 * Test the routing command in the overlay
+	 * network.
+	 */
 	public static void testRoutingCommand(){
 		RoutingTest test =  new RoutingTest();
 		test.parseCommandFile();
@@ -48,6 +64,12 @@ public class UnitTest {
 		command.sourceNode.route(command.destintionNode, command.datagram);
 	}
 	
+	/**
+	 * Test the routing command in the overlay
+	 * network as an argument as filename.
+	 * 
+	 * @param fileName the fileName containing route command
+	 */
 	public static void testRoutingCommand(String fileName){
 		RoutingTest test =  new RoutingTest();
 		test.parseCommandFile(fileName);

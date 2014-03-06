@@ -15,15 +15,45 @@ import com.mps.dsp.core.Node;
 import com.mps.dsp.core.NodeRegistry;
 import com.mps.dsp.util.Logger;
 
+/**
+ * A Test class to Test validity of Routing 
+ * between nodes in the overlay network.
+ * 
+ * @author msingh
+ *
+ */
 public class RoutingTest {
 
+	/**
+	 * A RoutingTest class logger tag 
+	 */
 	private final String TAG = RoutingTest.class.getSimpleName();
 
+	/**
+	 * Class to hold Routing commands
+	 * 
+	 * @author msingh
+	 *
+	 */
 	class RouteCommand {
+		
+		/**
+		 * Sender and Receiver Nodes.
+		 */
 		public final Node sourceNode;
 		public final Node destintionNode;
+		
+		/**
+		 * The datagram to route between nodes
+		 */
 		public final Datagram datagram;
 
+		/**
+		 * Creates an RouteCommand object.
+		 * @param sourceNode the sender source Node   
+		 * @param destintionNode the sender receiver Node
+		 * @param datagram the datagram to route between nodes
+		 */
 		public RouteCommand(Node sourceNode, Node destintionNode,
 				Datagram datagram) {
 			this.sourceNode = sourceNode;
@@ -32,8 +62,16 @@ public class RoutingTest {
 		}
 	}
 
+	/**
+	 * An instance to RouteCommand
+	 */
 	private RouteCommand command;
 
+	
+	/**
+	 * Return the RouteCommand instance
+	 * @return the RouteCommand instance
+	 */
 	public RouteCommand getRouteCommand() {
 		return command;
 	}
@@ -101,6 +139,13 @@ public class RoutingTest {
 		}
 	}
 
+	/**
+	 * Transform the command tokens into Nodes
+	 * data structure to launch routing message 
+	 * using connection stream.
+	 * 
+	 * @param line the string command line argument
+	 */
 	private void buildCommand(String line) {
 		// split the lines to tokens
 		String[] nodeToken = line.split("\\s+");
