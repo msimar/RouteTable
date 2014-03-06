@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.mps.dsp.util.Logger;
 import com.mps.dsp.util.Util;
 
 public class RoutingTable {
@@ -118,9 +119,9 @@ public class RoutingTable {
 					"Source", "Destination", "Interface", "Metric");;
 			final String DIVIDER = "--------------------------------------------------------------";
 			
-			System.out.println(DIVIDER);
-			System.out.println(HEADER);
-			System.out.println(DIVIDER);
+			Logger.console(DIVIDER);
+			Logger.console(HEADER);
+			Logger.console(DIVIDER);
 		}
 		
 		public void getView(){

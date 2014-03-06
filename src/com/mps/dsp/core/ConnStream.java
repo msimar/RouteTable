@@ -42,37 +42,16 @@ public class ConnStream implements Runnable{
 		this.datagram = datagram;
 	}
 	
-	/**
-	 * Construct a new ConnStream object with the given socket.
-	 * @param socket	Socket to use.
-	 */
-	public ConnStream(Node serverNode, Socket socket) {
-		Logger.d(TAG, "ConnStream() : Socket");
-		this.socket = socket;
-
-		createStreams();
-
-		Object object = null;
-		try {
-			object = inputStream.readObject();
-		} catch (Exception e) {
-			try {
-				socket.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
-		
-		if (object instanceof Datagram) {
-			Datagram datagram = (Datagram) object;
-			serverNode.receive(datagram);
-		}  
-	}
+	public boolean isRunning(){ return running; }
 	
 	/**
 	 * Creates a socket as a sender/client node.
 	 */
 	private void openStream() {
+		Logger.d(TAG, "openStream() ");
+		
+		Logger.d(TAG, "openStream() : socket : " + socket);
+		Logger.d(TAG, "openStream() : running : " + running);
 		
 		// Stream as a client
 		if (socket == null) {
@@ -84,6 +63,8 @@ public class ConnStream implements Runnable{
 					// Create a socket and connect it to the specified port.
 					socket = new Socket(toNode.getIPAddress(), Integer.parseInt(toNode.getPort()));
 					
+					Logger.d(TAG, "openStream() : socket : " + socket);
+					
 					// Create the object streams.
 					createStreams();
 					
@@ -92,7 +73,7 @@ public class ConnStream implements Runnable{
 					
 				} catch (IOException e) {
 					// Something went wrong. Keep on trying.
-					Logger.e(e.getLocalizedMessage() + ": Connecting to " + this.toNode + ". Retrying in " + (Configuration.retryConnectionTime / 1000.0f) + " s.");
+					Logger.e(TAG, "openStream() : " + e.getLocalizedMessage() + ": Connecting to " + this.toNode + ". Retrying in " + (Configuration.retryConnectionTime / 1000.0f) + " s.");
 					try {
 						Thread.sleep(Configuration.retryConnectionTime);
 					} catch (InterruptedException e1) {}
@@ -112,7 +93,7 @@ public class ConnStream implements Runnable{
 
 			inputStream = new ObjectInputStream(socket.getInputStream());
 		} catch (IOException e) {
-			Logger.e("Could not create input/output streams from socket: " + e.getLocalizedMessage());
+			Logger.e(TAG, "createStreams() : Could not create input/output streams from socket: " + e.getLocalizedMessage());
 		}
 	}
 	
@@ -121,21 +102,37 @@ public class ConnStream implements Runnable{
 	 * @param message the message to send
 	 */
 	public void send(Datagram datagram) {
-		Logger.d(TAG, "send()");
+		Logger.d(TAG, "send() : datagram");
+		
 		if (running) {
-
-			Logger.d("Sending datagram : " + datagram);
+			Logger.d(TAG, "send() : Sending datagram : ");
 			try {
-				outputStream.writeObject(datagram);
+				outputStream.writeObject(datagram.message.message);
 				outputStream.flush();
 			} catch (IOException e) {
-				Logger.e("Exception when sending a message: " + e.getLocalizedMessage());
-				//e.printStackTrace();
+				Logger.e(TAG, "send() : Exception when sending a message: " + e.getLocalizedMessage());
 				closeStream();
 			}
 		} else {
-			Logger.d("Failed trying sending a message for: " + this.fromNode);
+			Logger.d(TAG, "send() : Failed trying sending a message for: " + this.fromNode);
 		}
+	}
+	
+	/**
+	 * Listen for ConnStream messages.
+	 */
+	@Override
+	public void run() {
+		Logger.d(TAG, "run()");
+		
+		openStream();
+
+		Logger.d(TAG, "run() : ConnStream finnished executing and closing ConnStream for: " + this.fromNode);
+		
+		// Clean up the streams and socket.
+		finalize();
+		
+		closeStream();
 	}
 	
 	/**
@@ -145,13 +142,19 @@ public class ConnStream implements Runnable{
 		Logger.d(TAG, "closeStream()");
 		// Stop listening.
 		running = false;
-
-		// might possible ObjectInputStream#readObject() is preventing from actually closing,
-		// force it to close.
+ 
 		try {
 			if(inputStream != null)
 				inputStream.close();
 		} catch (IOException e) {}
+		
+		try {
+			
+			socket.shutdownOutput();
+			socket.shutdownInput();
+			socket.close();
+		} catch (Exception e) {
+		}
 	}
 	
 	/**
@@ -159,6 +162,7 @@ public class ConnStream implements Runnable{
 	 */
 	@Override
 	protected void finalize() {
+		Logger.d(TAG, "finalize()");
 		try {
 			outputStream.close();
 		} catch (Exception e) {
@@ -167,49 +171,10 @@ public class ConnStream implements Runnable{
 			inputStream.close();
 		} catch (Exception e) {
 		}
+		
 		try {
 			socket.close();
 		} catch (Exception e) {
 		}
-	}
-
-	/**
-	 * Listen for ConnStream messages.
-	 */
-	@Override
-	public void run() {
-		
-		openStream();
-		
-		Logger.d("Completed socket initialization for: " + this.fromNode);
-
-		// Keep listening for messages.
-		while (running) {
-			Object object = null;
-			
-			try {
-				// Read a message object from the InputStream.
-				object = inputStream.readObject();
-			} catch (Exception e) {
-				Logger.d("Exception:" + e.getLocalizedMessage());
-				running = false;
-			}
-
-			// Send the message to the RoutingTable.
-			if (object != null && object instanceof Datagram) {
-				Datagram datagram = (Datagram) object;
-				this.fromNode.receive(datagram);
-			}
-		}
-
-		Logger.d("ConnStream finnished executing and closing ConnStream for: " + this.fromNode);
-		
-		// Clean up the streams and socket.
-		finalize();
-	}
-
-	public UUID getId() {
-		// TODO Auto-generated method stub
-		return UUID.randomUUID();
 	}
 }

@@ -25,6 +25,7 @@ public class App {
 		for (int i = 0; i < Configuration.MAX_NODE; i++) {
 			Node node = NodeRegistry.getInstance().getNodesMap().get(i);
 			
+			node.execute();
 			// this should be called, only when all the nodes are build in network overlay
 			node.speedUpLookup();
 	 		// active each node to create ServerSocket and consumer thread to listen to messages. 

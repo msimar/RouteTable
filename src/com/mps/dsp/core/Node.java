@@ -21,7 +21,7 @@ public class Node extends UnitNode implements Serializable {
 	 * Node processes messages asynchronously. Similar to concept of
 	 * Producer/Consumer queue.
 	 */
-	private final BlockingQueue<Datagram> messageQue = new LinkedBlockingQueue<Datagram>();
+	private final BlockingQueue<String> messageQue = new LinkedBlockingQueue<String>();
 
 	/**
 	 * Receive a message.
@@ -29,7 +29,7 @@ public class Node extends UnitNode implements Serializable {
 	 * @param message
 	 *            the received message
 	 */
-	public void receive(Datagram message) {
+	public void receive(String message) {
 		Logger.d(TAG,"receive()"); 
 		messageQue.offer(message);
 	}
@@ -55,9 +55,9 @@ public class Node extends UnitNode implements Serializable {
 				while (true) {
 					try {
 						// Get the next message, if any.
-						Datagram datagram = messageQue.take();
+						String message = messageQue.take();
 
-						Logger.d(TAG, "Message Blocking Queue :: Datagram Recevied: " + datagram);
+						Logger.d(TAG, "Message Blocking Queue :: Message Recevied: " + message);
 					} catch (InterruptedException e) {
 						
 					}
@@ -118,8 +118,6 @@ public class Node extends UnitNode implements Serializable {
 	}
 
 	private void processRouting(Node source, Datagram datagram) {
-		Logger.d(TAG, "------------------");
-		Logger.d(TAG, "processRouting() : source : " + source);
 		// find the closest node to route the message near to the destination
 		// node
 		Node nextHopNode = source.routingTable.getClosestNode(source);
@@ -127,32 +125,49 @@ public class Node extends UnitNode implements Serializable {
 		// Print the route on the console
 		if (nextHopNode != null) {
 			try {
-				Logger.d(TableEntry.getTemplate(
+				Logger.console(TableEntry.getTemplate(
 						source.getIndex(), 
 						source.getIPAddress().getHostAddress(), 
 						nextHopNode.getIndex(), 
 						nextHopNode.getIPAddress().getHostAddress()));
+				Logger.console("--------------------------------------------------------------");
 			} catch (UnknownHostException e) {
 				// ignore
 			}
 		} else {
 			return;
 		}
+		
+		Logger.d(TAG, "processRouting() : source : " + source);
 
-		// Do TCP Handshake between nodes
+		// Update the datagram for transferring packets
 		datagram.setSource(source);
 		datagram.setDestination(nextHopNode);
 		
+		// Do TCP Handshake between nodes
 		doTCPHandshake(source, nextHopNode, datagram);
 		
-		Logger.d(TAG, "doTCPHandshake() status " + (nextHopNode.getIndex() == datagram.message.toNode.getIndex()));
+		Logger.d(TAG, "doTCPHandshake() Status " + (nextHopNode.getIndex() == datagram.message.toNode.getIndex()));
 
 		if (nextHopNode.getIndex() == datagram.message.toNode.getIndex()) {
-			//update the datagram
+			// Update the datagram for transferring packets
 			datagram.setSource(datagram.message.toNode);
 			datagram.setDestination(datagram.message.fromNode);
-			//do TCP handshake
+			
+			// Do TCP Handshake between final nodes
 			doTCPHandshake(datagram.message.toNode, datagram.message.fromNode, datagram);
+			
+			try {
+				Logger.console(TableEntry.getTemplate(
+						datagram.message.toNode.getIndex(), 
+						datagram.message.toNode.getIPAddress().getHostAddress(), 
+						datagram.message.fromNode.getIndex(), 
+						datagram.message.fromNode.getIPAddress().getHostAddress()));
+				Logger.console("------------------------------------------------------");
+			} catch (UnknownHostException e) {
+				// ignore
+			}
+			
 			return;
 		}
 
@@ -164,26 +179,51 @@ public class Node extends UnitNode implements Serializable {
 		Logger.d(TAG, "doTCPHandshake() between " + currentNode + " to " + nextHopNode);
 
 		serverTrait = new ServerTrait(nextHopNode);
-
-		timer = new Timer();
-		timer.schedule(new InitServerListening(), 500);
+		Thread sThread = new Thread(serverTrait);
+		sThread.start();
 
 		// nextHopNode : will be server
 		// currentNode will try to connect to the ServerSocket
 		ConnStream stream = new ConnStream(currentNode, nextHopNode, datagram);
-		new Thread(stream).run();
 
+		timer = new Timer();
+		timer.schedule(new InitServerListening(stream),100);
+		
+		Timer tcpTimer = new Timer();
+		
+		while( stream.isRunning() ){
+			// waiting for processing
+			tcpTimer.scheduleAtFixedRate(new TCPLogProcess(), 200, 10);
+		}	
+		Logger.d(TAG, "doTCPHandshake() stream isRunning : " + stream.isRunning());
+		
 		// Terminate the timer thread
 		timer.cancel();
+		tcpTimer.cancel();
+		Logger.d(TAG, "doTCPHandshake() timer task cancel ");
+		
+		// do clean up
+		sThread = null;
+		stream = null;
+		timer = null;
 	}
 
 	private Timer timer;
 
 	class InitServerListening extends TimerTask {
+		ConnStream stream;
+		public InitServerListening(ConnStream stream) {
+			this.stream = stream;
+		}
 		public void run() {
-			Logger.d(TAG, "InitServerListening.run()");
-			// server thread to listen to the ServerSocket
-			new Thread(serverTrait).start();
+			Logger.d(TAG, "Init stream.run()");
+			new Thread(stream).start();
+		}
+	}
+	
+	class TCPLogProcess extends TimerTask {
+		public void run() {
+			Logger.d(TAG, "doTCPHandshake() processing... ");
 		}
 	}
 
