@@ -172,23 +172,23 @@ public class Node extends UnitNode implements Serializable {
 		Logger.d(TAG, "doTCPHandshake() Status " + (nextHopNode.getIdentifier() == datagram.message.toNode.getIdentifier()));
 
 		if (nextHopNode.getIdentifier() == datagram.message.toNode.getIdentifier()) {
-			// Update the datagram for transferring packets
-			datagram.setSource(datagram.message.toNode);
-			datagram.setDestination(datagram.message.fromNode);
-			
-			// Do TCP Handshake between final nodes
-			doTCPHandshake(datagram.message.toNode, datagram.message.fromNode, datagram);
-			
-			try {
-				Logger.console(TableEntry.getTemplate(
-						datagram.message.toNode.getIndex(), 
-						datagram.message.toNode.getIPAddress().getHostAddress(), 
-						datagram.message.fromNode.getIndex(), 
-						datagram.message.fromNode.getIPAddress().getHostAddress()));
-				Logger.console("------------------------------------------------------");
-			} catch (UnknownHostException e) {
-				// ignore
-			}
+//			// Update the datagram for transferring packets
+//			datagram.setSource(datagram.message.toNode);
+//			datagram.setDestination(datagram.message.fromNode);
+//			
+//			// Do TCP Handshake between final nodes
+//			doTCPHandshake(datagram.message.toNode, datagram.message.fromNode, datagram);
+//			
+//			try {
+//				Logger.console(TableEntry.getTemplate(
+//						datagram.message.toNode.getIndex(), 
+//						datagram.message.toNode.getIPAddress().getHostAddress(), 
+//						datagram.message.fromNode.getIndex(), 
+//						datagram.message.fromNode.getIPAddress().getHostAddress()));
+//				Logger.console("------------------------------------------------------");
+//			} catch (UnknownHostException e) {
+//				// ignore
+//			}
 			
 			return;
 		}
