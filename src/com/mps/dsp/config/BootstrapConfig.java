@@ -14,7 +14,7 @@ public class BootstrapConfig {
 	private Node bootstrapNode;
 
 	/**
-	 * To bootstrap the channels we use a serverSocket to listen for incoming
+	 * A serverSocket to listen for incoming
 	 * connections.
 	 */
 	private ServerSocket serverSocket;

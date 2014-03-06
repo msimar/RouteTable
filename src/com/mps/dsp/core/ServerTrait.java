@@ -17,9 +17,9 @@ public class ServerTrait implements Runnable {
 	private ServerSocket serverSocket;
 
 	/**
-	 * A map containing node ids and their respective channels.
+	 * A map <node id, Stream>.
 	 */
-	private final Map<UUID, ConnStream> idsToChannels = new ConcurrentHashMap<UUID, ConnStream>();
+	private final Map<UUID, ConnStream> idToStreamMap = new ConcurrentHashMap<UUID, ConnStream>();
 
 	private Node serverNode;
 
@@ -56,7 +56,7 @@ public class ServerTrait implements Runnable {
 				ConnStream connStream = new ConnStream(this.serverNode, clientSocket);
 
 				// Add the ConnStream to a map for easy access.
-				idsToChannels.put(connStream.getId(), connStream);
+				idToStreamMap.put(connStream.getId(), connStream);
 
 				// Start the ConnStream.
 				new Thread(connStream).start();
@@ -68,7 +68,7 @@ public class ServerTrait implements Runnable {
 		}
 
 		// The Socket closed, clean up and exit.
-		for (ConnStream connStream : idsToChannels.values()) {
+		for (ConnStream connStream : idToStreamMap.values()) {
 			connStream.closeStream();
 		}
 	}
