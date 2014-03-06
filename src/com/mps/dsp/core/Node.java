@@ -93,8 +93,7 @@ public class Node extends UnitNode implements Serializable {
 				Node closestSuccessorNode = NodeRegistry.getInstance().getNodesMap().get(routeNodePointerIndex);
 				
 				this.routingTable.addTableEntry(this, closestSuccessorNode);
-				this.routingTable
-						.addToModuloSuccessorList(closestSuccessorNode);
+				this.routingTable.addToModuloSuccessorList(closestSuccessorNode);
 
 				// add successor
 				this.routingTable.setSuccessor(NodeRegistry.getInstance()
@@ -112,7 +111,6 @@ public class Node extends UnitNode implements Serializable {
 	 *            the message for destination Node.
 	 */
 	public void route(Node destination, Datagram datagram) {
-
 		this.routingTable.getHeaderTemplate();
 		processRouting(this, datagram);
 	}
@@ -120,7 +118,7 @@ public class Node extends UnitNode implements Serializable {
 	private void processRouting(Node source, Datagram datagram) {
 		// find the closest node to route the message near to the destination
 		// node
-		Node nextHopNode = source.routingTable.getClosestNode(source);
+		Node nextHopNode = source.routingTable.getClosestNode(datagram.message.toNode);
 
 		// Print the route on the console
 		if (nextHopNode != null) {

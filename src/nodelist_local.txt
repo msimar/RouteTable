@@ -6,3 +6,11 @@
 5 localhost 40005
 6 localhost 40006
 7 localhost 40007
+8 localhost 40008
+9 localhost 40009
+10 localhost 40010
+11 localhost 40011
+12 localhost 40012
+13 localhost 40013
+14 localhost 40014
+15 localhost 40015

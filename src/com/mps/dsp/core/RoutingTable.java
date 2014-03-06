@@ -12,9 +12,8 @@ import com.mps.dsp.util.Util;
 
 public class RoutingTable {
 
-	// routing pointer for immediate successor
+	// routing pointer for immediate successor/successor
 	private Node successor;
-
 	private Node predecessor;
 
 	// n+2^1, n+2^2, n+2^3,…, n+2^L (all arithmetic operations modulo N)
@@ -39,11 +38,18 @@ public class RoutingTable {
 		this.viewBuilder = new TableViewBuilder();
 	}
 
-	// getters and setters
+	/**
+	 * Return the successor neighbor node
+	 * @return the successor node
+	 */
 	public UnitNode getSuccessor() {
 		return successor;
 	}
 
+	/**
+	 * Set the Successor to the given parameter
+	 * @param successor the successor Node in Routing table
+	 */
 	public void setSuccessor(Node successor) {
 		this.successor = successor;
 	}
@@ -67,18 +73,32 @@ public class RoutingTable {
 		routingTableTreeSet.add(tEntry);
 	}
 
+	/**
+	 * Return the predecessor neighbor node
+	 * @return the predecessor node
+	 */
 	public Node getPredeccessor() {
 		return predecessor;
 	}
 
+	/**
+	 * Set the Predecessor to the given parameter
+	 * @param predecessor the predecessor Node in Routing table
+	 */
 	public void setPredeccessor(Node predecessor) {
 		this.predecessor = predecessor;
 	}
 	
+	/**
+	 * Return the header template for TableViewBuilder
+	 */
 	public void getHeaderTemplate(){
 		viewBuilder.getHeader();
 	}
 	
+	/**
+	 * Get the view for each TableEntry
+	 */
 	public void getView(){
 		viewBuilder.getView();
 	}
@@ -121,6 +141,9 @@ public class RoutingTable {
 	 */
 	final class TableViewBuilder {
 		
+		/**
+		 * Return the header template for TableViewBuilder
+		 */
 		public void getHeader(){
 			
 			final String HEADER = String.format("%15s  |  %15s  | %10s  | %4s",
@@ -132,6 +155,9 @@ public class RoutingTable {
 			Logger.console(DIVIDER);
 		}
 		
+		/**
+		 * Get the view for each TableEntry
+		 */
 		public void getView(){
 			Iterator<TableEntry> iterator = routingTableTreeSet.iterator();
 		 

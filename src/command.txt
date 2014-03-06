@@ -1,2 +1,2 @@
 #Usage: <Source Node index> <Destination Node index> <message>
-Route 1 7 "Hello"
+Route 1 15 "Hello"
