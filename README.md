@@ -13,9 +13,9 @@ Usage
 
 find all *.java files and organize them into source.text file
 
-'''
+```
   $ find -name "*.java" > source.txt
-'''
+```
 
 *Compile the java files to generate .class files*
 
