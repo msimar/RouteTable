@@ -18,6 +18,9 @@ import com.mps.dsp.util.Logger;
  */
 public class ConfigFileWriter {
 
+	/**
+	 * The logger tag for ConfigFileReader class
+	 */
 	private final String TAG = ConfigFileWriter.class.getSimpleName();
 	
 	/**

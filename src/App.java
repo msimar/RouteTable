@@ -14,6 +14,11 @@ import com.mps.dsp.test.UnitTest;
  */
 public class App {
 
+	/**
+	 * Main Call to the App
+	 * @param args String arguments expected : Node lists file and Route Command file
+	 * @throws UnknownHostException
+	 */
 	public static void main(String[] args) throws UnknownHostException {
 
 		if (args.length < 2) {

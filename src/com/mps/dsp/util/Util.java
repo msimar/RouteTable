@@ -1,6 +1,7 @@
 package com.mps.dsp.util;
 
 /**
+ * A utility class for the App
  * 
  * hash(key) :: Stackoveflow Reference ::
  * http://stackoverflow.com/questions/664014

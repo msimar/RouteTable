@@ -12,11 +12,16 @@ import com.mps.dsp.util.Util;
 
 public class RoutingTable {
 
-	// routing pointer for immediate successor/successor
+	/**
+	 * The Node instance to hold immediate successor/predecessor
+	 */
 	private Node successor;
 	private Node predecessor;
 
-	// n+2^1, n+2^2, n+2^3,…, n+2^L (all arithmetic operations modulo N)
+	/**
+	 * Collection to hold the set of nodes as a 
+	 * n+2^1, n+2^2, n+2^3,…, n+2^L (all arithmetic operations modulo N)
+	 */
 	private final LinkedList<Node> moduloSuccessorList = new LinkedList<Node>();
 	
 	/**
@@ -24,10 +29,19 @@ public class RoutingTable {
 	 */
 	private final ConcurrentHashMap<Node, TableEntry> tableEntryMap;
 	
+	/**
+	 * Collection of TableEntry as List<TableEntry>
+	 */
 	private final List<TableEntry> routingTableTreeSet;
 	
+	/**
+	 * Instance of TableViewBuilder to generate views
+	 */
 	private final TableViewBuilder viewBuilder;
 
+	/**
+	 * Creates an RoutingTable object.
+	 */
 	public RoutingTable() {
 		this.successor = null;
 		this.predecessor = null;
@@ -54,14 +68,29 @@ public class RoutingTable {
 		this.successor = successor;
 	}
 
+	/**
+	 * Return the arithmetic operations modulo N successor list
+	 * @return the collection as LinkedList<Node>
+	 */
 	public LinkedList<Node> getModuloSuccessorList() {
 		return moduloSuccessorList;
 	}
 	
+	/**
+	 * Add the node to the arithmetic operations modulo N successor list
+	 * @param node the node require to add in the list
+	 * @return True if successfully added node to the list, false otherwise.
+	 */
 	public boolean addToModuloSuccessorList(Node node) {
 		return moduloSuccessorList.add(node);
 	}
 	
+	/**
+	 * Add pair of Source and Destination Node as TableEntry in routing table.
+	 * @param source the source Node for routing table
+	 * @param destination the destination Node for routing table
+	 * @throws UnknownHostException
+	 */
 	public void addTableEntry(Node source, Node destination) throws UnknownHostException{
 		// create a table entry
 		

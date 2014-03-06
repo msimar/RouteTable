@@ -35,8 +35,10 @@ public final class Configuration {
 	public static final int SERVER_BACKLOG = 10; 
 
 	/**
+	 * Configure the network structure for the App.
+	 * 
 	 * Configure MAX_ROUTE_TABLE_ENTRIES as per the 
-	 * arithmetic modulo of M
+	 * arithmetic modulo of M, Configure the MAX Nodes
 	 */
 	public static void config(){
 		
@@ -47,11 +49,11 @@ public final class Configuration {
 		MAX_ROUTE_TABLE_ENTRIES = (int) log2(MAX_NODE);
 	}
 
-	public static double logb(double a, double b) {
+	private static double logb(double a, double b) {
 		return Math.log(a) / Math.log(b);
 	}
 
-	public static double log2(double a) {
+	private static double log2(double a) {
 		return logb(a, 2);
 	}
 }

@@ -10,13 +10,37 @@ import java.net.Socket;
 import com.mps.dsp.config.Configuration;
 import com.mps.dsp.util.Logger;
 
+/**
+ * This class represents Trait of the Node as Server. The  
+ * abstract class implements roles of Server. 
+ * 
+ * The Server ( or Coordinator ) trait enable handling of Client messages. 
+ * The Server can handle multiple clients at the same time. The Server respond  
+ * to each client using its state as message.  
+ * 
+ * @author msingh
+ *
+ */
 public class ServerTrait implements Runnable {
 	
+	/**
+	 * A ServerTrait class logger tag 
+	 */
 	private final String TAG = ServerTrait.class.getSimpleName();
 
+	/**
+	 * A ServerSocket instance
+	 */
 	private ServerSocket serverSocket;
+	
+	/**
+	 * A Client Socket instance
+	 */
 	private Socket clientSocket;
 
+	/**
+	 * Node hold trait as Server Node
+	 */
 	private Node serverNode;
 	
 	/**
@@ -25,6 +49,10 @@ public class ServerTrait implements Runnable {
 	private ObjectInputStream inputStream;
 	private ObjectOutputStream outputStream;
 
+	/**
+	 * A constructor to ServerTrait class
+	 * @param node the server node in the network
+	 */
 	public ServerTrait(Node node) {
 		this.serverNode = node;
 	}
@@ -76,8 +104,8 @@ public class ServerTrait implements Runnable {
 	}
 	
 	/**
-	 * Construct a new ConnStream object with the given socket.
-	 * @param socket	Socket to use.
+	 * Construct a new ConnStream with the given socket.
+	 * @param serverNode the serverNode require to bind to the connection stream.
 	 */
 	public void connectToStream(Node serverNode) {
 		Logger.d(TAG, "connectToStream() : serverNode, socket");
@@ -119,7 +147,7 @@ public class ServerTrait implements Runnable {
 	}
 	
 	/**
-	 * Create input/output streams for this ConnStream.
+	 * Create input/output streams for the connection stream.
 	 */
 	private void createStreams() {
 		Logger.d(TAG, "createStreams()");
@@ -134,7 +162,7 @@ public class ServerTrait implements Runnable {
 	}
 	
 	/**
-	 * Close this ConnStream.
+	 * Close the connection stream.
 	 */
 	public void closeStream() {
 		Logger.d(TAG, "closeStream()");

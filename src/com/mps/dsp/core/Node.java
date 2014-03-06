@@ -15,8 +15,17 @@ public class Node extends UnitNode implements Serializable {
 	private final String TAG = Node.class.getSimpleName();
 
 	private static final long serialVersionUID = -1196856161917615615L;
+	
+	/**
+	 * A Timer to Schedule Tasks 
+	 */
+	private Timer timer;
 
+	/**
+	 * A ServerTrait instance
+	 */
 	private ServerTrait serverTrait;
+	
 	/**
 	 * Node processes messages asynchronously. Similar to concept of
 	 * Producer/Consumer queue.
@@ -26,8 +35,8 @@ public class Node extends UnitNode implements Serializable {
 	/**
 	 * Receive a message.
 	 * 
-	 * @param message
-	 *            the received message
+	 * @param message the received message
+	 * 
 	 */
 	public void receive(String message) {
 		Logger.d(TAG,"receive()"); 
@@ -35,10 +44,17 @@ public class Node extends UnitNode implements Serializable {
 	}
 
 	/**
-	 * The routing table for this node.
+	 * The routing table for current node.
 	 */
 	public final RoutingTable routingTable;
 
+	/**
+	 * Creates an Node object.
+	 * 
+	 * @param index the index of the Node
+	 * @param address the address of the Node
+	 * @param port the port of the Node
+	 */
 	public Node(int index, String address, String port) {
 		super(index, address, port);
 
@@ -46,7 +62,7 @@ public class Node extends UnitNode implements Serializable {
 	}
 
 	/**
-	 * Execute the Node
+	 * Initiate the Thread to start message Queue
 	 */
 	public void execute() {
 		// Start a consumer thread to process messages for this Node.
@@ -67,7 +83,7 @@ public class Node extends UnitNode implements Serializable {
 	}
 
 	/**
-	 * Perform speed lookup by configuring routing table
+	 * Perform speed lookup by configuring routing table.
 	 * 
 	 * @throws UnknownHostException
 	 */
@@ -115,6 +131,14 @@ public class Node extends UnitNode implements Serializable {
 		processRouting(this, datagram);
 	}
 
+	/**
+	 * Process the routing between fromNode and toNode. The TCP 
+	 * handshake and processing of routing of datagram handles
+	 * between the sender and receiver Node.
+	 *  
+	 * @param source the source Node for routing
+	 * @param datagram the datagram for the routing
+	 */
 	private void processRouting(Node source, Datagram datagram) {
 		// find the closest node to route the message near to the destination
 		// node
@@ -173,6 +197,16 @@ public class Node extends UnitNode implements Serializable {
 		processRouting(nextHopNode, datagram);
 	}
 
+	/**
+	 * Perform TCP handshake between Sender and Receiver Node.
+	 * Open connection stream between Sender and Receiver. Send 
+	 * datagram between Sender and Receiver via open connection 
+	 * stream. Close the the open stream after communication. 
+	 *  
+	 * @param currentNode the sender Node of the network
+	 * @param nextHopNode the next hop Node in the network
+	 * @param datagram the datagram require to send between Sender and Receiver
+	 */
 	public void doTCPHandshake(Node currentNode, Node nextHopNode, Datagram datagram) {
 		Logger.d(TAG, "doTCPHandshake() between " + currentNode + " to " + nextHopNode);
 
@@ -207,8 +241,13 @@ public class Node extends UnitNode implements Serializable {
 		timer = null;
 	}
 
-	private Timer timer;
-
+	/**
+	 * InitServerListening class to initiate the connection
+	 * stream thread as a TimerTask.
+	 * 
+	 * @author msingh
+	 *
+	 */
 	class InitServerListening extends TimerTask {
 		ConnStream stream;
 		public InitServerListening(ConnStream stream) {
@@ -220,12 +259,22 @@ public class Node extends UnitNode implements Serializable {
 		}
 	}
 	
+	/**
+	 * TCPLogProcess class to handle TCP processing logs
+	 * while TCP handshake is in process.
+	 *  
+	 * @author msingh
+	 *
+	 */
 	class TCPLogProcess extends TimerTask {
 		public void run() {
 			System.out.print(".");
 		}
 	}
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub

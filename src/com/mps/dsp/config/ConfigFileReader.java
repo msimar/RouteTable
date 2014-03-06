@@ -22,7 +22,10 @@ import com.mps.dsp.util.Logger;
  *
  */
 public class ConfigFileReader {
-	 
+	
+	/**
+	 * The logger tag for ConfigFileReader class
+	 */
 	private final String TAG = ConfigFileReader.class.getSimpleName();
 	
 	/**
