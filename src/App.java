@@ -3,11 +3,16 @@ import java.net.UnknownHostException;
 import com.mps.dsp.config.ConfigFileReader;
 import com.mps.dsp.config.ConfigFileWriter;
 import com.mps.dsp.config.Configuration;
-import com.mps.dsp.core.Message;
 import com.mps.dsp.core.Node;
 import com.mps.dsp.core.NodeRegistry;
 import com.mps.dsp.test.UnitTest;
 
+/**
+ * Entry point class for the project.
+ * 
+ * @author msingh
+ *
+ */
 public class App {
 
 	public static void main(String[] args) throws UnknownHostException {

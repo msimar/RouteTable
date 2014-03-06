@@ -11,6 +11,15 @@ import com.mps.dsp.core.Node;
 import com.mps.dsp.core.NodeRegistry;
 import com.mps.dsp.util.Logger;
 
+/**
+ * File Reader to configure nodelist.txt file. It parse 
+ * the file and build nodes data stucture for the 
+ * overlay networks. Nodes are stored in a NodeRegistry
+ * class
+ * 
+ * @author msingh
+ *
+ */
 public class ConfigFileReader {
 	 
 	private final String TAG = ConfigFileReader.class.getSimpleName();
@@ -21,12 +30,12 @@ public class ConfigFileReader {
 	 * into the the Resource class.
 	 */
 	public void parseConfigFile() {
-		//Logger.d(TAG, "parseConfigFile()");
+		Logger.d(TAG, "writeToConfigFile() ");
 
 		String workingDir = System.getProperty("user.dir");
 		String packagePath = "/src/com/mps/dsp/config/";
 
-		//System.out.println(workingDir);
+		Logger.d(TAG, "workingDir : " + workingDir ); 
 
 		File file = new File(workingDir + packagePath + "/nodelist.txt");
 
@@ -49,7 +58,7 @@ public class ConfigFileReader {
 			}
 		}
 
-		//Logger.d(TAG, "Total Nodes in System : " + NodeRegistry.getInstance().getNodes().size());
+		Logger.d(TAG, "Total Nodes in System : " + NodeRegistry.getInstance().getNodes().size());
 	}
 
 	/**
@@ -58,8 +67,6 @@ public class ConfigFileReader {
 	 * 
 	 * @param line
 	 *            The line read from configuration file
-	 * @param nodeList
-	 *            The List<Node> data structure as a holder to save Nodes.
 	 */
 	private void buildNodes(String line) {
 		// split the lines to tokens

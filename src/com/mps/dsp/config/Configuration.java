@@ -2,6 +2,7 @@ package com.mps.dsp.config;
 
 /**
  * Static configuration class containing some global variables.
+ * 
  * @author msingh
  *
  */
@@ -25,6 +26,10 @@ public final class Configuration {
 	 */
 	public static int MAX_ROUTE_TABLE_ENTRIES;
 
+	/**
+	 * Configure MAX_ROUTE_TABLE_ENTRIES as per the 
+	 * arithmetic modulo of M
+	 */
 	public static void config(){
 		MAX_ROUTE_TABLE_ENTRIES = (int) log2(MAX_NODE);
 	}

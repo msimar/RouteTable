@@ -5,11 +5,26 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import com.mps.dsp.util.Logger;
+
+/**
+ * File Writer to configure nodelist.txt file. It build
+ * nodelist.txt file as per the given set of template.
+ * The template is organized as :
+ * <Host Index> <Host IPAddress> <Host PortNumber>
+ * 
+ * @author msingh
+ *
+ */
 public class ConfigFileWriter {
 
 	private final String TAG = ConfigFileWriter.class.getSimpleName();
 	
+	/**
+	 * Write to the nodelist.txt configuration file.
+	 */
 	public void writeToConfigFile() {
+		Logger.d(TAG, "writeToConfigFile() ");
 		try {
 			 
 			String workingDir = System.getProperty("user.dir");
