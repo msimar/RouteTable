@@ -1,3 +1,16 @@
+
+
+Requirements 
+==============
+
+License
+==============
+
+Contact me
+==============
+
+**Maninder Pal Singh**
+
 Learning
 
 
