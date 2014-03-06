@@ -1,10 +1,13 @@
 package com.mps.dsp.core;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.TreeSet;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.mps.dsp.util.Util;
 
 public class RoutingTable {
 
@@ -21,7 +24,7 @@ public class RoutingTable {
 	 */
 	private final ConcurrentHashMap<Node, TableEntry> tableEntryMap;
 	
-	private final TreeSet<TableEntry> routingTableTreeSet;
+	private final List<TableEntry> routingTableTreeSet;
 	
 	private final TableViewBuilder viewBuilder;
 
@@ -30,7 +33,7 @@ public class RoutingTable {
 		this.predecessor = null;
 		
 		this.tableEntryMap = new ConcurrentHashMap<Node, TableEntry>();
-		this.routingTableTreeSet = new TreeSet<TableEntry>();
+		this.routingTableTreeSet = new ArrayList<TableEntry>();
 		
 		this.viewBuilder = new TableViewBuilder();
 	}
@@ -54,7 +57,8 @@ public class RoutingTable {
 	
 	public void addTableEntry(Node source, Node destination) throws UnknownHostException{
 		// create a table entry
-		TableEntry tEntry = new TableEntry(source.getIPAddress().toString(), destination.getIPAddress().toString(), 1);
+		TableEntry tEntry = new TableEntry(source.getIPAddress().getHostAddress() + ":" + source.getPort(), 
+				destination.getIPAddress().getHostAddress() + ":" + destination.getPort(), 1);
 		
 		tableEntryMap.put(destination, tEntry);
 		
@@ -69,8 +73,36 @@ public class RoutingTable {
 		this.predecessor = predecessor;
 	}
 	
+	public void getHeaderTemplate(){
+		viewBuilder.getHeader();
+	}
+	
 	public void getView(){
 		viewBuilder.getView();
+	}
+	
+	public Node getClosestNode(Node destination){
+		
+		Node nextHopNode = null;
+		int minimumHopDistance = Util.INVALID_INDEX;
+		
+		for (Node successorNode : this.getModuloSuccessorList()) {
+
+			if( minimumHopDistance == Util.INVALID_INDEX ){
+				// update the minimum hop node distance
+				minimumHopDistance = destination.getIndex() - successorNode.getIndex();
+				// update the next hope node
+				nextHopNode = successorNode;
+			}else{
+				if (minimumHopDistance > (destination.getIndex() - successorNode.getIndex())) {
+					// update the min hop node distance
+					minimumHopDistance = destination.getIndex() - successorNode.getIndex();
+					// update the next hope node
+					nextHopNode = successorNode;
+				}
+			}
+		}
+		return nextHopNode;
 	}
 	
 	/**

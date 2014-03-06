@@ -21,12 +21,12 @@ public class ConfigFileReader {
 	 * into the the Resource class.
 	 */
 	public void parseConfigFile() {
-		Logger.d(TAG, "parseConfigFile()");
+		//Logger.d(TAG, "parseConfigFile()");
 
 		String workingDir = System.getProperty("user.dir");
 		String packagePath = "/src/com/mps/dsp/config/";
 
-		System.out.println(workingDir);
+		//System.out.println(workingDir);
 
 		File file = new File(workingDir + packagePath + "/nodelist.txt");
 
@@ -49,8 +49,7 @@ public class ConfigFileReader {
 			}
 		}
 
-		Logger.d(TAG, "Total Nodes in System : "
-				+ NodeRegistry.getInstance().getNodes().size());
+		//Logger.d(TAG, "Total Nodes in System : " + NodeRegistry.getInstance().getNodes().size());
 	}
 
 	/**

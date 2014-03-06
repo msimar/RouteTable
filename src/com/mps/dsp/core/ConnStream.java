@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.UUID;
 
 import com.mps.dsp.config.Configuration;
 import com.mps.dsp.util.Logger;
 
 public class ConnStream implements Runnable{
+	
+	private final String TAG = ConnStream.class.getSimpleName();
+	
 	/**
 	 * Socket to send/receive.
 	 */
@@ -30,17 +34,20 @@ public class ConnStream implements Runnable{
 	 */
 	private Node fromNode;
 	private Node toNode;
+	private Datagram datagram;
 	
-	public ConnStream(Node fromNode, Node toNode) {
+	public ConnStream(Node fromNode, Node toNode, Datagram datagram) {
 		this.fromNode = fromNode;
 		this.toNode = toNode;
+		this.datagram = datagram;
 	}
 	
 	/**
 	 * Construct a new ConnStream object with the given socket.
 	 * @param socket	Socket to use.
 	 */
-	public ConnStream(Socket socket) {
+	public ConnStream(Node serverNode, Socket socket) {
+		Logger.d(TAG, "ConnStream() : Socket");
 		this.socket = socket;
 
 		createStreams();
@@ -49,7 +56,6 @@ public class ConnStream implements Runnable{
 		try {
 			object = inputStream.readObject();
 		} catch (Exception e) {
-			// Something went wrong, close the socket.
 			try {
 				socket.close();
 			} catch (IOException e1) {
@@ -57,9 +63,9 @@ public class ConnStream implements Runnable{
 			}
 		}
 		
-		if (object instanceof Message) {
-			Message message = (Message) object;
-			// TODO : process message	
+		if (object instanceof Datagram) {
+			Datagram datagram = (Datagram) object;
+			serverNode.receive(datagram);
 		}  
 	}
 	
@@ -82,11 +88,11 @@ public class ConnStream implements Runnable{
 					createStreams();
 					
 					// Send message to the other node.
-					send(new Message(fromNode, toNode));
+					send(datagram);
 					
 				} catch (IOException e) {
 					// Something went wrong. Keep on trying.
-					Logger.e(e.getLocalizedMessage() + " Connecting to " + this.toNode + ". Retrying in " + (Configuration.retryConnectionTime / 1000.0f) + " s.");
+					Logger.e(e.getLocalizedMessage() + ": Connecting to " + this.toNode + ". Retrying in " + (Configuration.retryConnectionTime / 1000.0f) + " s.");
 					try {
 						Thread.sleep(Configuration.retryConnectionTime);
 					} catch (InterruptedException e1) {}
@@ -99,7 +105,7 @@ public class ConnStream implements Runnable{
 	 * Create input/output streams for this ConnStream.
 	 */
 	private void createStreams() {
-
+		Logger.d(TAG, "createStreams()");
 		try {
 			outputStream = new ObjectOutputStream(socket.getOutputStream());
 			outputStream.flush();
@@ -114,15 +120,17 @@ public class ConnStream implements Runnable{
 	 * Send a message through this ConnStream.
 	 * @param message the message to send
 	 */
-	public void send(Message message) {
+	public void send(Datagram datagram) {
+		Logger.d(TAG, "send()");
 		if (running) {
 
-			Logger.d("Sending message : " + message);
+			Logger.d("Sending datagram : " + datagram);
 			try {
-				outputStream.writeObject(message);
+				outputStream.writeObject(datagram);
 				outputStream.flush();
 			} catch (IOException e) {
 				Logger.e("Exception when sending a message: " + e.getLocalizedMessage());
+				//e.printStackTrace();
 				closeStream();
 			}
 		} else {
@@ -134,7 +142,7 @@ public class ConnStream implements Runnable{
 	 * Close this ConnStream.
 	 */
 	public void closeStream() {
-		
+		Logger.d(TAG, "closeStream()");
 		// Stop listening.
 		running = false;
 
@@ -170,6 +178,7 @@ public class ConnStream implements Runnable{
 	 */
 	@Override
 	public void run() {
+		
 		openStream();
 		
 		Logger.d("Completed socket initialization for: " + this.fromNode);
@@ -183,12 +192,13 @@ public class ConnStream implements Runnable{
 				object = inputStream.readObject();
 			} catch (Exception e) {
 				Logger.d("Exception:" + e.getLocalizedMessage());
+				running = false;
 			}
 
 			// Send the message to the RoutingTable.
-			if (object != null && object instanceof Message) {
-				Message message = (Message) object;
-				this.fromNode.receive(message);
+			if (object != null && object instanceof Datagram) {
+				Datagram datagram = (Datagram) object;
+				this.fromNode.receive(datagram);
 			}
 		}
 
@@ -198,8 +208,8 @@ public class ConnStream implements Runnable{
 		finalize();
 	}
 
-	public Integer getId() {
+	public UUID getId() {
 		// TODO Auto-generated method stub
-		return fromNode.getIndex();
+		return UUID.randomUUID();
 	}
 }

@@ -7,13 +7,15 @@ import java.io.IOException;
 
 public class ConfigFileWriter {
 
+	private final String TAG = ConfigFileWriter.class.getSimpleName();
+	
 	public void writeToConfigFile() {
 		try {
 			 
 			String workingDir = System.getProperty("user.dir");
 			String packagePath = "/src/com/mps/dsp/config/";
 			
-			System.out.println(workingDir);
+			//System.out.println(workingDir);
 			
 			String content = "localhost";
  
@@ -33,7 +35,7 @@ public class ConfigFileWriter {
 			
 			bw.close();
  
-			System.out.println("Done");
+			//System.out.println("Done");
  
 		} catch (IOException e) {
 			e.printStackTrace();

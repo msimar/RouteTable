@@ -1,7 +1,9 @@
 package com.mps.dsp.core;
 
 
+
 public final class TableEntry  implements Comparable<TableEntry>{
+	
 	/**
 	 * Destination address
 	 */
@@ -35,6 +37,13 @@ public final class TableEntry  implements Comparable<TableEntry>{
 		// TODO Auto-generated method stub
 		return String.format("%15s  |  %15s  | %10s  | %4d",this.source, this.destination, this._interface, this.metric);
 	}
+	
+	public static String getTemplate(int sourceIndex, String source, int destinationIndex, String destination){
+		return String.format("%15s  |  %15s  | %10s  | %4d", 
+				"[" + sourceIndex + "]" + source, 
+				"[" + destinationIndex + "]" + destination, 
+				"eth0", 1);
+	}
 
 	/**
 	 * @see java.lang.Comparable#compareTo
@@ -45,31 +54,31 @@ public final class TableEntry  implements Comparable<TableEntry>{
 		return metric - o.metric;
 	}
 	
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + metric;
-		return result;
-	}
-
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TableEntry other = (TableEntry) obj;
-		if (metric != other.metric)
-			return false;
-		return true;
-	}
+//	/**
+//	 * @see java.lang.Object#hashCode()
+//	 */
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = 1;
+//		result = prime * result + metric;
+//		return result;
+//	}
+//
+//	/**
+//	 * @see java.lang.Object#equals(java.lang.Object)
+//	 */
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		TableEntry other = (TableEntry) obj;
+//		if (metric != other.metric)
+//			return false;
+//		return true;
+//	}
 }

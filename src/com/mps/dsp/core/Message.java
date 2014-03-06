@@ -14,14 +14,16 @@ public class Message implements Serializable{
 	
 	public final Node fromNode;
 	public final Node toNode;
+	public final String message;
 	
-	public Message(Node fromNode, Node toNode) {
+	public Message(Node fromNode, Node toNode, String message) {
 		 this.fromNode = fromNode;
 		 this.toNode = toNode;
+		 this.message = message;
 	}
 
 	@Override
 	public String toString() {
-		return "(" + fromNode + " -> " + toNode + ")";
+		return "(" + fromNode + " -> " + toNode + ") :" + message;
 	}
 }

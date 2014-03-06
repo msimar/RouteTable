@@ -1,0 +1,66 @@
+Route [1]127.0.0.1 [7]127.0.0.1 "Hello"
+--------------------------------------------------------------
+         Source  |      Destination  |  Interface  | Metric
+--------------------------------------------------------------
+Node: ------------------
+Node: processRouting() : source : [1] Node(localhost:40001)
+   [1]127.0.0.1  |     [5]127.0.0.1  |       eth0  |    1
+Node: doTCPHandshake() between [1] Node(localhost:40001) to [5] Node(localhost:40005)
+RouteApp: Connection refused: Connecting to [5] Node(localhost:40005). Retrying in 1.0 s.
+Node: InitServerListening.run()
+ServerTrait: run()
+Starting sockets
+Starting to listen ([5] Node(localhost:40005))
+ConnStream: createStreams()
+ConnStream: ConnStream() : Socket
+ConnStream: createStreams()
+ConnStream: send()
+Sending datagram : ([1] Node(localhost:40001) -> [5] Node(localhost:40005)) : Routing message : ([1] Node(localhost:40001) -> [7] Node(localhost:40007)) :"Hello"
+RouteApp: Exception when sending a message: Broken pipe
+ConnStream: closeStream()
+Completed socket initialization for: [1] Node(localhost:40001)
+ConnStream finnished executing and closing ConnStream for: [1] Node(localhost:40001)
+Node: doTCPHandshake() status false
+Node: ------------------
+Node: processRouting() : source : [5] Node(localhost:40005)
+   [5]127.0.0.1  |     [7]127.0.0.1  |       eth0  |    1
+Node: doTCPHandshake() between [5] Node(localhost:40005) to [7] Node(localhost:40007)
+RouteApp: Connection refused: Connecting to [7] Node(localhost:40007). Retrying in 1.0 s.
+Completed socket initialization for: null
+Exception:Socket closed
+ConnStream finnished executing and closing ConnStream for: null
+Node: InitServerListening.run()
+ServerTrait: run()
+Starting sockets
+Starting to listen ([7] Node(localhost:40007))
+ConnStream: createStreams()
+ConnStream: ConnStream() : Socket
+ConnStream: createStreams()
+ConnStream: send()
+Sending datagram : ([5] Node(localhost:40005) -> [7] Node(localhost:40007)) : Routing message : ([1] Node(localhost:40001) -> [7] Node(localhost:40007)) :"Hello"
+RouteApp: Exception when sending a message: com.mps.dsp.core.RoutingTable
+ConnStream: closeStream()
+Completed socket initialization for: [5] Node(localhost:40005)
+ConnStream finnished executing and closing ConnStream for: [5] Node(localhost:40005)
+Node: doTCPHandshake() status true
+Node: doTCPHandshake() between [7] Node(localhost:40007) to [1] Node(localhost:40001)
+Completed socket initialization for: null
+RouteApp: Connection refused: Connecting to [1] Node(localhost:40001). Retrying in 1.0 s.
+Exception:Socket closed
+ConnStream finnished executing and closing ConnStream for: null
+Node: InitServerListening.run()
+ServerTrait: run()
+Starting sockets
+Starting to listen ([1] Node(localhost:40001))
+ConnStream: createStreams()
+ConnStream: ConnStream() : Socket
+ConnStream: createStreams()
+ConnStream: send()
+Sending datagram : ([7] Node(localhost:40007) -> [1] Node(localhost:40001)) : Routing message : ([1] Node(localhost:40001) -> [7] Node(localhost:40007)) :"Hello"
+RouteApp: Exception when sending a message: com.mps.dsp.core.RoutingTable
+ConnStream: closeStream()
+Completed socket initialization for: [7] Node(localhost:40007)
+ConnStream finnished executing and closing ConnStream for: [7] Node(localhost:40007)
+Completed socket initialization for: null
+Exception:Socket closed
+ConnStream finnished executing and closing ConnStream for: null

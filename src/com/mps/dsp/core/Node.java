@@ -1,22 +1,27 @@
 package com.mps.dsp.core;
 
+import java.io.Serializable;
+import java.net.UnknownHostException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.mps.dsp.config.Configuration;
 import com.mps.dsp.util.Logger;
-import com.mps.dsp.util.Util;
 
-public class Node extends UnitNode {
+public class Node extends UnitNode implements Serializable {
 
-	public static final String LTAG = Node.class.getSimpleName();
+	private final String TAG = Node.class.getSimpleName();
+
+	private static final long serialVersionUID = -1196856161917615615L;
 
 	private ServerTrait serverTrait;
 	/**
 	 * Node processes messages asynchronously. Similar to concept of
 	 * Producer/Consumer queue.
 	 */
-	private final BlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
+	private final BlockingQueue<Datagram> messageQue = new LinkedBlockingQueue<Datagram>();
 
 	/**
 	 * Receive a message.
@@ -24,8 +29,9 @@ public class Node extends UnitNode {
 	 * @param message
 	 *            the received message
 	 */
-	public void receive(Message message) {
-		q.offer(message);
+	public void receive(Datagram message) {
+		Logger.d(TAG,"receive()"); 
+		messageQue.offer(message);
 	}
 
 	/**
@@ -37,28 +43,23 @@ public class Node extends UnitNode {
 		super(index, address, port);
 
 		this.routingTable = new RoutingTable();
- 	}
-	
+	}
+
 	/**
 	 * Execute the Node
 	 */
-	public void execute(){
-		this.serverTrait = new ServerTrait(this);
-		this.serverTrait.run();
-
+	public void execute() {
 		// Start a consumer thread to process messages for this Node.
 		new Thread(new Runnable() {
 			public void run() {
 				while (true) {
 					try {
 						// Get the next message, if any.
-						Message message = q.take();
+						Datagram datagram = messageQue.take();
 
-						// TODO Process the specific message
-						Logger.d("Message Recevied: " + message);
-
+						Logger.d(TAG, "Message Blocking Queue :: Datagram Recevied: " + datagram);
 					} catch (InterruptedException e) {
-
+						
 					}
 				}
 			}
@@ -67,8 +68,10 @@ public class Node extends UnitNode {
 
 	/**
 	 * Perform speed lookup by configuring routing table
+	 * 
+	 * @throws UnknownHostException
 	 */
-	public void speedUpLookup() {
+	public void speedUpLookup() throws UnknownHostException {
 
 		int routeNodePointerIndex;
 
@@ -87,9 +90,11 @@ public class Node extends UnitNode {
 			// YES
 
 			if (routeNodePointerIndex != this.index) {
-				this.routingTable.addToModuloSuccessorList(
-						NodeRegistry.getInstance().getNodesMap()
-								.get(routeNodePointerIndex));
+				Node closestSuccessorNode = NodeRegistry.getInstance()
+						.getNodesMap().get(routeNodePointerIndex);
+				this.routingTable.addTableEntry(this, closestSuccessorNode);
+				this.routingTable
+						.addToModuloSuccessorList(closestSuccessorNode);
 
 				// add successor
 				this.routingTable.setSuccessor(NodeRegistry.getInstance()
@@ -97,49 +102,94 @@ public class Node extends UnitNode {
 			}
 		}
 	}
-	
+
 	/**
 	 * Route the message from Source Node to Destination Node.
-	 * @param destination the destination Node.
-	 * @param message the message for destination Node. 
+	 * 
+	 * @param destination
+	 *            the destination Node.
+	 * @param message
+	 *            the message for destination Node.
 	 */
-	public void route(Node destination, Message message) {
-		 
-		Node nextHopNode = null;
-		int minimumHopDistance = Util.INVALID_INDEX;
-		
-		for (Node successorNode : this.routingTable.getModuloSuccessorList()) {
+	public void route(Node destination, Datagram datagram) {
 
-			if( minimumHopDistance == Util.INVALID_INDEX ){
-				// update the minimum hop node distance
-				minimumHopDistance = destination.getIndex() - successorNode.getIndex();
-				// update the next hope node
-				nextHopNode = successorNode;
-			}else{
-				if (minimumHopDistance > (destination.getIndex() - successorNode.getIndex())) {
-					// update the min hop node distance
-					minimumHopDistance = destination.getIndex() - successorNode.getIndex();
-					// update the next hope node
-					nextHopNode = successorNode;
-				}
+		this.routingTable.getHeaderTemplate();
+		processRouting(this, datagram);
+	}
+
+	private void processRouting(Node source, Datagram datagram) {
+		Logger.d(TAG, "------------------");
+		Logger.d(TAG, "processRouting() : source : " + source);
+		// find the closest node to route the message near to the destination
+		// node
+		Node nextHopNode = source.routingTable.getClosestNode(source);
+
+		// Print the route on the console
+		if (nextHopNode != null) {
+			try {
+				Logger.d(TableEntry.getTemplate(
+						source.getIndex(), 
+						source.getIPAddress().getHostAddress(), 
+						nextHopNode.getIndex(), 
+						nextHopNode.getIPAddress().getHostAddress()));
+			} catch (UnknownHostException e) {
+				// ignore
 			}
-		}
-		
-		if(nextHopNode != null) {
-			Logger.d(this + " >>>> " + nextHopNode);
-		}else{
+		} else {
 			return;
 		}
+
+		// Do TCP Handshake between nodes
+		datagram.setSource(source);
+		datagram.setDestination(nextHopNode);
 		
-		if( nextHopNode.getIndex() == destination.getIndex() ) return;
+		doTCPHandshake(source, nextHopNode, datagram);
 		
-		// route to the next hop
-		nextHopNode.route(destination,message);
+		Logger.d(TAG, "doTCPHandshake() status " + (nextHopNode.getIndex() == datagram.message.toNode.getIndex()));
+
+		if (nextHopNode.getIndex() == datagram.message.toNode.getIndex()) {
+			//update the datagram
+			datagram.setSource(datagram.message.toNode);
+			datagram.setDestination(datagram.message.fromNode);
+			//do TCP handshake
+			doTCPHandshake(datagram.message.toNode, datagram.message.fromNode, datagram);
+			return;
+		}
+
+		// route to the next HOP
+		processRouting(nextHopNode, datagram);
+	}
+
+	public void doTCPHandshake(Node currentNode, Node nextHopNode, Datagram datagram) {
+		Logger.d(TAG, "doTCPHandshake() between " + currentNode + " to " + nextHopNode);
+
+		serverTrait = new ServerTrait(nextHopNode);
+
+		timer = new Timer();
+		timer.schedule(new InitServerListening(), 500);
+
+		// nextHopNode : will be server
+		// currentNode will try to connect to the ServerSocket
+		ConnStream stream = new ConnStream(currentNode, nextHopNode, datagram);
+		new Thread(stream).run();
+
+		// Terminate the timer thread
+		timer.cancel();
+	}
+
+	private Timer timer;
+
+	class InitServerListening extends TimerTask {
+		public void run() {
+			Logger.d(TAG, "InitServerListening.run()");
+			// server thread to listen to the ServerSocket
+			new Thread(serverTrait).start();
+		}
 	}
 
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "[" + index + "]Node (" + address + ":" + port + ")";
+		return "[" + index + "] Node(" + address + ":" + port + ")";
 	}
 }
