@@ -47,5 +47,14 @@ public class UnitTest {
 		
 		command.sourceNode.route(command.destintionNode, command.datagram);
 	}
+	
+	public static void testRoutingCommand(String fileName){
+		RoutingTest test =  new RoutingTest();
+		test.parseCommandFile(fileName);
+		
+		RouteCommand command = test.getRouteCommand();
+		
+		command.sourceNode.route(command.destintionNode, command.datagram);
+	}
 
 }

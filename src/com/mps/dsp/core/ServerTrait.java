@@ -3,9 +3,11 @@ package com.mps.dsp.core;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import com.mps.dsp.config.Configuration;
 import com.mps.dsp.util.Logger;
 
 public class ServerTrait implements Runnable {
@@ -34,18 +36,26 @@ public class ServerTrait implements Runnable {
 	public void run() {
 		Logger.d(TAG, "run()");
 		try {
+			
+			InetAddress bindAddr = serverNode.getIPAddress();
+			
 			// Start a listening socket.
-			Logger.d(TAG, "Starting sockets");
+			Logger.d(TAG, "Starting sockets : " + bindAddr);
+			Logger.d(TAG, "Starting port : " + serverNode.getPort());
+			
 			// new ServerSocket(portNumber);
-			serverSocket = new ServerSocket(Integer.parseInt(serverNode.getPort()));
+			serverSocket = new ServerSocket(
+					Integer.parseInt(serverNode.getPort()), 
+					Configuration.SERVER_BACKLOG,  
+					bindAddr);			
 
 		} catch (IOException e) {
-			// Most likely : port already occupied, print an error message.
-			Logger.e(e.getLocalizedMessage());
+			Logger.e(TAG, "Exception Creating ServerSocket :" + e.getLocalizedMessage());
+			e.printStackTrace();
 		}
 
 		// Listen and start sockets if needed.
-		Logger.d(TAG, "Starting to listen (" + serverNode + ")");
+		Logger.d(TAG, "Starting to listen (" + serverSocket + ")");
 
 		while (serverSocket != null && !serverSocket.isClosed()) {
 			try {

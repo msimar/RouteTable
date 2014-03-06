@@ -20,8 +20,6 @@ public class UnitNode{
 		setIndex(index);
 		setAddress(address);
 		setPort(port);
-		// TODO set identifier as the hash value
-		setIdentifier(index);
 	}
 	
 	public int getIndex() {
@@ -36,10 +34,8 @@ public class UnitNode{
 		return identifier;
 	}
 
-	private void setIdentifier(int value) {
+	public void setIdentifier(int value) {
 		this.identifier = value;
-		//TODO :: verify uniqueness of hash table
-		//this.identifier = Util.hash(key);
 	}
 
 	public String getAddress() {

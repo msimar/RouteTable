@@ -78,7 +78,7 @@ public class Node extends UnitNode implements Serializable {
 		// Logger.INSTANCE.d(LTAG,"--- current Node : " + this.index );
 
 		for (int i = 0; i < Configuration.MAX_ROUTE_TABLE_ENTRIES; i++) {
-			routeNodePointerIndex = (this.index + (int) Math.pow(2, i));
+			routeNodePointerIndex = (this.identifier + (int) Math.pow(2, i));
 
 			if (routeNodePointerIndex >= Configuration.MAX_IDENTIFIER)
 				routeNodePointerIndex = routeNodePointerIndex
@@ -89,16 +89,16 @@ public class Node extends UnitNode implements Serializable {
 			// ping the node -- is node still action ?
 			// YES
 
-			if (routeNodePointerIndex != this.index) {
-				Node closestSuccessorNode = NodeRegistry.getInstance()
-						.getNodesMap().get(routeNodePointerIndex);
+			if (routeNodePointerIndex != this.identifier) {
+				Node closestSuccessorNode = NodeRegistry.getInstance().getNodesMap().get(routeNodePointerIndex);
+				
 				this.routingTable.addTableEntry(this, closestSuccessorNode);
 				this.routingTable
 						.addToModuloSuccessorList(closestSuccessorNode);
 
 				// add successor
 				this.routingTable.setSuccessor(NodeRegistry.getInstance()
-						.getNodesMap().get(this.index + 1));
+						.getNodesMap().get(this.identifier + 1));
 			}
 		}
 	}
@@ -147,9 +147,9 @@ public class Node extends UnitNode implements Serializable {
 		// Do TCP Handshake between nodes
 		doTCPHandshake(source, nextHopNode, datagram);
 		
-		Logger.d(TAG, "doTCPHandshake() Status " + (nextHopNode.getIndex() == datagram.message.toNode.getIndex()));
+		Logger.d(TAG, "doTCPHandshake() Status " + (nextHopNode.getIdentifier() == datagram.message.toNode.getIdentifier()));
 
-		if (nextHopNode.getIndex() == datagram.message.toNode.getIndex()) {
+		if (nextHopNode.getIdentifier() == datagram.message.toNode.getIdentifier()) {
 			// Update the datagram for transferring packets
 			datagram.setSource(datagram.message.toNode);
 			datagram.setDestination(datagram.message.fromNode);
@@ -193,8 +193,9 @@ public class Node extends UnitNode implements Serializable {
 		
 		while( stream.isRunning() ){
 			// waiting for processing
-			tcpTimer.scheduleAtFixedRate(new TCPLogProcess(), 200, 10);
+			tcpTimer.scheduleAtFixedRate(new TCPLogProcess(), 1000, 1000);
 		}	
+		System.out.println();
 		Logger.d(TAG, "doTCPHandshake() stream isRunning : " + stream.isRunning());
 		
 		// Terminate the timer thread
@@ -223,7 +224,7 @@ public class Node extends UnitNode implements Serializable {
 	
 	class TCPLogProcess extends TimerTask {
 		public void run() {
-			Logger.d(TAG, "doTCPHandshake() processing... ");
+			System.out.print(".");
 		}
 	}
 

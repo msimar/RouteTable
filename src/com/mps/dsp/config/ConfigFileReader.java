@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import com.mps.dsp.core.Node;
@@ -23,13 +24,42 @@ import com.mps.dsp.util.Logger;
 public class ConfigFileReader {
 	 
 	private final String TAG = ConfigFileReader.class.getSimpleName();
+	
+	/**
+	 * This method parse the configuration file and transform content of
+	 * configuration file into set of Nodes. These compiled Nodes are stored
+	 * into the the Resource class.
+	 */
+	public boolean parseConfigFile(String fileName){
+		Logger.d(TAG, "parseConfigFile() ");
+
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		InputStream input = classLoader.getResourceAsStream("./" + fileName);
+		
+		try(BufferedReader br = new BufferedReader(new InputStreamReader(input))) {
+
+		    for(String line; (line = br.readLine()) != null; ) {
+		    	buildNodes(line);
+		    }
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		Logger.d(TAG, "Total Nodes in System : " + NodeRegistry.getInstance().getNodes().size());
+		
+		if(NodeRegistry.getInstance().getNodes().size() > 0) return true;
+		
+		return false;
+	}
 
 	/**
 	 * This method parse the configuration file and transform content of
 	 * configuration file into set of Nodes. These compiled Nodes are stored
 	 * into the the Resource class.
 	 */
-	public void parseConfigFile() {
+	public boolean parseConfigFile() {
 		Logger.d(TAG, "writeToConfigFile() ");
 
 		String workingDir = System.getProperty("user.dir");
@@ -38,6 +68,9 @@ public class ConfigFileReader {
 		Logger.d(TAG, "workingDir : " + workingDir ); 
 
 		File file = new File(workingDir + packagePath + "/nodelist.txt");
+		
+		System.out.println(file);
+		System.out.println(file.exists());
 
 		// if file does not exists, show message
 		if (!file.exists()) {
@@ -59,6 +92,10 @@ public class ConfigFileReader {
 		}
 
 		Logger.d(TAG, "Total Nodes in System : " + NodeRegistry.getInstance().getNodes().size());
+		
+		if(NodeRegistry.getInstance().getNodes().size() > 0) return true;
+		
+		return false;
 	}
 
 	/**
@@ -71,6 +108,7 @@ public class ConfigFileReader {
 	private void buildNodes(String line) {
 		// split the lines to tokens
 		String[] nodeToken = line.split("\\s+");
+		
 		// create new nodes, add to list
 		NodeRegistry.getInstance().register(
 				new Node(Integer.parseInt(nodeToken[0]), nodeToken[1],

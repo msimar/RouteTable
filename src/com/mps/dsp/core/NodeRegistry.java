@@ -31,8 +31,9 @@ public class NodeRegistry {
 	}
 
 	public boolean register(Node node) {
+		node.setIdentifier(nodesMap.size());
 		// add node to map
-		nodesMap.put(node.getIndex(), node);
+		nodesMap.put(node.getIdentifier(), node);
 		// add node to the list
 		return nodes.add(node);
 	}

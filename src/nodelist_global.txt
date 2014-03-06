@@ -1,0 +1,16 @@
+120 	ukko020.hpc.cs.helsinki.fi	4420 
+121 	ukko021.hpc.cs.helsinki.fi	4421
+122 	ukko022.hpc.cs.helsinki.fi	4422
+123 	ukko023.hpc.cs.helsinki.fi	65023
+124 	ukko024.hpc.cs.helsinki.fi	65024
+125 	ukko025.hpc.cs.helsinki.fi	65025
+126 	ukko026.hpc.cs.helsinki.fi	65026
+127 	ukko027.hpc.cs.helsinki.fi	65027
+140 	ukko040.hpc.cs.helsinki.fi  65040
+141 	ukko041.hpc.cs.helsinki.fi  65041
+142 	ukko042.hpc.cs.helsinki.fi  65042
+143 	ukko043.hpc.cs.helsinki.fi  65043
+144 	ukko044.hpc.cs.helsinki.fi  65044
+145 	ukko045.hpc.cs.helsinki.fi  65045
+146 	ukko046.hpc.cs.helsinki.fi  65046
+147 	ukko047.hpc.cs.helsinki.fi  65047

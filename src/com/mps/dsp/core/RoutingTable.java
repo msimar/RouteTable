@@ -58,6 +58,7 @@ public class RoutingTable {
 	
 	public void addTableEntry(Node source, Node destination) throws UnknownHostException{
 		// create a table entry
+		
 		TableEntry tEntry = new TableEntry(source.getIPAddress().getHostAddress() + ":" + source.getPort(), 
 				destination.getIPAddress().getHostAddress() + ":" + destination.getPort(), 1);
 		
@@ -82,6 +83,12 @@ public class RoutingTable {
 		viewBuilder.getView();
 	}
 	
+	/**
+	 * Get closest Node to the given Node from the Routing Table
+	 * 
+	 * @param destination the node to locate closest node
+	 * @return the closest node to the given node
+	 */
 	public Node getClosestNode(Node destination){
 		
 		Node nextHopNode = null;
@@ -91,13 +98,14 @@ public class RoutingTable {
 
 			if( minimumHopDistance == Util.INVALID_INDEX ){
 				// update the minimum hop node distance
-				minimumHopDistance = destination.getIndex() - successorNode.getIndex();
+				minimumHopDistance = Math.abs(destination.getIdentifier() - successorNode.getIdentifier());
 				// update the next hope node
 				nextHopNode = successorNode;
 			}else{
-				if (minimumHopDistance > (destination.getIndex() - successorNode.getIndex())) {
+				int hopDifference = Math.abs(destination.getIdentifier() - successorNode.getIdentifier());
+				if (minimumHopDistance > hopDifference ) {
 					// update the min hop node distance
-					minimumHopDistance = destination.getIndex() - successorNode.getIndex();
+					minimumHopDistance = hopDifference ;
 					// update the next hope node
 					nextHopNode = successorNode;
 				}

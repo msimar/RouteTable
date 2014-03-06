@@ -4,13 +4,23 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.UUID;
 
 import com.mps.dsp.config.Configuration;
 import com.mps.dsp.util.Logger;
 
+/**
+ * Create a connection stream between a sender node and 
+ * a receiver node. It opens socket connection to send
+ * message to the receiver node via tcp connection stream.
+ * 
+ * @author msingh
+ *
+ */
 public class ConnStream implements Runnable{
 	
+	/**
+	 * A ConnStream class logger tag 
+	 */
 	private final String TAG = ConnStream.class.getSimpleName();
 	
 	/**
@@ -36,12 +46,24 @@ public class ConnStream implements Runnable{
 	private Node toNode;
 	private Datagram datagram;
 	
+	/**
+	 * A constructor to ConnStream class
+	 * 
+	 * @param fromNode the sender node in network
+	 * @param toNode the receiver node in network
+	 * @param datagram the packet data require to send between nodes
+	 */
 	public ConnStream(Node fromNode, Node toNode, Datagram datagram) {
 		this.fromNode = fromNode;
 		this.toNode = toNode;
 		this.datagram = datagram;
 	}
 	
+	/**
+	 * Evaluate if connection stream is still running
+	 * 
+	 * @return True if we're still running, false otherwise.
+	 */
 	public boolean isRunning(){ return running; }
 	
 	/**
