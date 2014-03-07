@@ -59,7 +59,7 @@ public class UnitNode{
 
 	/**
 	 * Set the index of host Node
-	 * @param source the index of host Node
+	 * @param index the index of host Node
 	 */
 	public void setIndex(int index) {
 		this.index = index;
@@ -75,7 +75,7 @@ public class UnitNode{
 
 	/**
 	 * Set the identifier of host Node
-	 * @param source the identifier of host Node
+	 * @param value the identifier of host Node
 	 */
 	public void setIdentifier(int value) {
 		this.identifier = value;
@@ -99,7 +99,7 @@ public class UnitNode{
 
 	/**
 	 * Set the address of host Node
-	 * @param source the address of host Node
+	 * @param address the address of host Node
 	 */
 	public void setAddress(String address) {
 		this.address = address;
@@ -115,7 +115,7 @@ public class UnitNode{
 
 	/**
 	 * Set the port of host Node
-	 * @param source the port of host Node
+	 * @param port the port of host Node
 	 */
 	public void setPort(String port) {
 		this.port = port;
@@ -131,7 +131,7 @@ public class UnitNode{
 
 	/**
 	 * Set the status of host Node
-	 * @param source the status of host Node
+	 * @param status the status of host Node
 	 */
 	public void setStatus(boolean status) {
 		this.status = status;

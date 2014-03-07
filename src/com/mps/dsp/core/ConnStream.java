@@ -120,8 +120,8 @@ public class ConnStream implements Runnable{
 	}
 	
 	/**
-	 * Send a message through this ConnStream.
-	 * @param message the message to send
+	 * Send a datagram through this ConnStream.
+	 * @param datagram the datagram to send
 	 */
 	public void send(Datagram datagram) {
 		Logger.d(TAG, "send() : datagram");

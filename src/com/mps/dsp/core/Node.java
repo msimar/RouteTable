@@ -123,8 +123,8 @@ public class Node extends UnitNode implements Serializable {
 	 * 
 	 * @param destination
 	 *            the destination Node.
-	 * @param message
-	 *            the message for destination Node.
+	 * @param datagram
+	 *            the datagram for destination Node.
 	 */
 	public void route(Node destination, Datagram datagram) {
 		this.routingTable.getHeaderTemplate();

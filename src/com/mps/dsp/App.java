@@ -1,5 +1,6 @@
-import java.net.UnknownHostException;
+package com.mps.dsp;
 
+import java.net.UnknownHostException;
 import com.mps.dsp.config.ConfigFileReader;
 import com.mps.dsp.config.Configuration;
 import com.mps.dsp.core.Node;
