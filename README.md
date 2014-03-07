@@ -15,29 +15,8 @@ Java API Documentation
   $ PROJECT_ROOT_FOLDER/doc/index.html
 ```
 
-Usage
+Configuration
 ==============
-
-*Compiling the source code :*
-
-find all *.java files and organize them into source.text file
-
-```
-  $ find -name "*.java" > source.txt
-```
-
-*Compile the java files to generate .class files*
-
-```
-  $ javac  @source.txt
-```
-
-*Run the Application as:*
-
-```
-  $ java App nodelist_local.txt command.txt
-```
-The first argument should be the node list file and the second argument should be the file containing routing command.
 
 The file **nodelist_global.txt** or **nodelist_local.txt**  can be consider as example template to follow. The global node list can be organized as per the following structure:
 
@@ -63,6 +42,42 @@ The local node list can be organized as per the following structure:
   6 localhost 40006
   7 localhost 40007
 ```
+
+The command file can be organized as:
+
+```
+<Route>  <Index of Source Node > <Index of Destination Node > <String message >
+```
+
+```
+Route 1 15 "Hello"
+```
+
+
+Usage
+==============
+
+*Compiling the source code :*
+
+find all *.java files and organize them into source.text file
+
+```
+  $ find -name "*.java" > source.txt
+```
+
+*Compile the java files to generate .class files*
+
+```
+  $ javac  @source.txt
+```
+
+*Run the Application as:*
+
+```
+  $ java App nodelist_local.txt command.txt
+```
+The first argument should be the node list file and the second argument should be the file containing routing command.
+
 
 License
 ==============
