@@ -8,6 +8,13 @@ Requirements
 
 JDK 6 should be install on the linux/windows machine.
 
+Java API Documentation 
+==============
+
+```
+  $ PROJECT_ROOT_FOLDER/doc/index.html
+```
+
 Usage
 ==============
 
